@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import opennlp.tools.util.Span;
 
 import org.onlperations.entity.ConversationInput;
+import org.onlperations.entity.ConversationOutput;
+import org.onlperations.entity.NamedEntity;
 import org.onlperations.services.NLPServiceUtilities;
 import org.onlperations.services.NLPServices;
 
@@ -39,7 +41,10 @@ public class NLPOperationsController {
 	}
 	
 	@PostMapping(value = "/getNamedEntities")
-	public ResponseEntity<String[]> getNamedEntities(@RequestBody ConversationInput conversationInput) {
+	public ResponseEntity<ConversationOutput> getNamedEntities(@RequestBody ConversationInput conversationInput) {
+		
+		ConversationOutput conversationOutput = new ConversationOutput();
+		
 		String[] namedEntities = {""};
 		
 		Span nameSpans[] = nlpServices.findNamedEntity(conversationInput.getSentence(), "NAM");
@@ -47,9 +52,16 @@ public class NLPOperationsController {
 		
 		LOGGER.info("nameSpans: " + Arrays.toString(nameSpans));
 		
+		String entityName = "";
+		
 		for(int nameSpansCnt = 0; nameSpansCnt < nameSpans.length; nameSpansCnt++) {
-			List<String> nameSpan = (ArrayList<String>) NLPServiceUtilities.getValueAtSpan(nameSpans[nameSpansCnt], sentenceArr);
-			LOGGER.info("nameSpan: " + nameSpan);
+			List<String> nameSpanValues = (ArrayList<String>) NLPServiceUtilities.getValueAtSpan(nameSpans[nameSpansCnt], sentenceArr);
+			LOGGER.info("nameSpanValues: " + nameSpanValues);
+			entityName = "";
+			for(String nameSpanValue : nameSpanValues ) {
+				entityName += nameSpanValue + " ";
+			}
+			conversationOutput.getNamedEntities().add(new NamedEntity(entityName, "NAM"));
 		}
 		
 		
@@ -58,12 +70,17 @@ public class NLPOperationsController {
 		LOGGER.info("orgSpans: " + Arrays.toString(orgSpans));
 		
 		for(int orgSpansCnt = 0; orgSpansCnt < orgSpans.length; orgSpansCnt++) {
-			List<String> orgSpan = (ArrayList<String>) NLPServiceUtilities.getValueAtSpan(orgSpans[orgSpansCnt], sentenceArr);
-			LOGGER.info("orgSpan: " + orgSpan);
+			List<String> orgSpanValues = (ArrayList<String>) NLPServiceUtilities.getValueAtSpan(orgSpans[orgSpansCnt], sentenceArr);
+			LOGGER.info("orgSpanValues: " + orgSpanValues);
+			entityName = "";
+			for(String orgSpanValue : orgSpanValues ) {
+				entityName += orgSpanValue + " ";
+			}
+			conversationOutput.getNamedEntities().add(new NamedEntity(entityName, "ORG"));
 		}
 				
 		HttpHeaders responseHeaders = new HttpHeaders();
-		return new ResponseEntity<String[]>(namedEntities, responseHeaders, HttpStatus.OK);
+		return new ResponseEntity<ConversationOutput>(conversationOutput, responseHeaders, HttpStatus.OK);
 	}
 
 }
