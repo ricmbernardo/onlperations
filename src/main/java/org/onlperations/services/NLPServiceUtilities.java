@@ -48,7 +48,8 @@ public class NLPServiceUtilities {
 		//Remove URL, mentions, hashtags
 		try {
 			cleanSentence = cleanSentence.replaceAll(urlRegex, "");
-			cleanSentence = cleanSentence.replaceAll(hashtagRegex, "");
+			//cleanSentence = cleanSentence.replaceAll(hashtagRegex, "");
+			cleanSentence = cleanSentence.replaceAll("#", "");
 			cleanSentence = cleanSentence.replaceAll(mentionRegex, "");
 			cleanSentence = cleanSentence.replaceAll(unnecessaryCharsRegex, "");
 			cleanSentence = cleanSentence.replaceAll("\\n", " ");

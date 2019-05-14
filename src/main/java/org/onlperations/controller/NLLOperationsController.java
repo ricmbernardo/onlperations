@@ -124,7 +124,7 @@ public class NLLOperationsController {
 	@GetMapping(value="/getTrendingTweetsTest")
 	public ResponseEntity<List<String>> getTrendingTweets() throws IOException {
 
-		List<String> tweets = twitterServices.getTrendingTweets(23424934, 500);
+		List<String> tweets = twitterServices.getTrendingTweets(23424934, 500, true);
 		
 		//NLPServiceUtilities.writeToFile("./data/train/trendingtweets.txt", tweets);
 		

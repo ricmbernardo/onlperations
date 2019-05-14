@@ -15,5 +15,6 @@ public interface TwitterServices {
 	
 	public List<String> getTweets(String queryStr, String countryCode, String altLang, int resultCount) throws IOException;
 	
-	public List<String> getTrendingTweets(int woeid, int tweetCountPerTrend) throws IOException;
+	public List<String> getTrendingTweets(int woeid, int tweetCountPerTrend, boolean includeTrendInOutput) throws IOException;
+
 }

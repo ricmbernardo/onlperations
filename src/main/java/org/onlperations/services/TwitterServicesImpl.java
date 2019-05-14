@@ -70,17 +70,22 @@ public class TwitterServicesImpl implements TwitterServices{
 		return tweets;
 	}
 	
-	public List<String> getTrendingTweets(int woeid, int tweetCountPerTrend) throws IOException {
+	public List<String> getTrendingTweets(int woeid, int tweetCountPerTrend, boolean includeTrendInOutput) throws IOException {
 
 		List<String> tweets = new ArrayList<String>();
 		try {
 			//Note: PH = 23424934
 			Trends trends = this.getTrends(woeid);
 			for(int i = 0; i < trends.getTrends().length; i++) {
+				String trendStr = (trends.getTrends()[i]).getName();
 				String queryStr = (trends.getTrends()[i]).getQuery();
 				List<String> trendTweets = this.getTweets(queryStr, "PH", "tl", tweetCountPerTrend);
 				for(String trendTweet : trendTweets) {
-					tweets.add(trendTweet);
+					if (includeTrendInOutput) {
+						tweets.add(trendStr.replaceAll("#", "") + " " + trendTweet);
+					} else {
+						tweets.add(trendTweet);
+					}
 				}
 			}
 		} catch (TwitterException e) {
