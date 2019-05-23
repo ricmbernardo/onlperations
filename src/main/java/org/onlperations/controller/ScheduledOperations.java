@@ -54,7 +54,7 @@ public class ScheduledOperations {
 
 	}
 
-	@Scheduled(cron = "0 0/25 * * * *")
+	@Scheduled(cron = "0 0/15 * * * *")
 	public void createDocumentCategorizerTrainingData() {
 		
 		LOGGER.info("Running job to update Sentence Detector Training Data");
@@ -69,7 +69,7 @@ public class ScheduledOperations {
 
 	}
 	
-	@Scheduled(cron = "0 0/30 * * * *")
+	//@Scheduled(cron = "0 0/16 * * * *")
 	public void trainCategorizer() throws IOException {
 		
 		DoccatModel model = null;
@@ -87,7 +87,7 @@ public class ScheduledOperations {
 			
 			model = DocumentCategorizerME.train("en", sampleStream, params, new DoccatFactory());
 			
-			modelOutFile = new File("./data/train/en-fil-doccat.bin");
+			modelOutFile = new File("./src/main/resources/en-fil-doccat-naive-bayes.bin");
 			modelOutFile.getParentFile().mkdirs();
 			
 			try(OutputStream modelOut = new BufferedOutputStream(new FileOutputStream(modelOutFile))) {

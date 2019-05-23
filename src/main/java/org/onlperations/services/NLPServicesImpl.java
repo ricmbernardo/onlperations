@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.onlperations.controller.NLPOperationsController;
+import org.onlperations.controller.ScheduledOperations;
 import org.onlperations.entity.ConversationInput;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,11 @@ public class NLPServicesImpl implements NLPServices {
 	
 	MaxentTagger stanfordTaggerFilipino;
 	
-	DocumentCategorizerME categorizer;
+	//DocumentCategorizerME categorizer;
+	
+	DocumentCategorizerME categorizerNaiveBayes;
+	
+	ScheduledOperations scheduledOperations;
 	
 	NLPServicesImpl() throws IOException{
 		try(InputStream modelIn = new ClassPathResource("en-pos-maxent.bin").getInputStream()) {
@@ -103,10 +108,17 @@ public class NLPServicesImpl implements NLPServices {
 		
 		this.stanfordTaggerFilipino = new MaxentTagger("./data/stanford/filipino-left5words-owlqn2-distsim-pref6-inf2.tagger");
 		
-		try(InputStream modelIn = new ClassPathResource("en-fil-doccat.bin").getInputStream()) {
+//		try(InputStream modelIn = new ClassPathResource("en-fil-doccat.bin").getInputStream()) {
+//			DoccatModel model = new DoccatModel(modelIn);
+//			this.categorizer = new DocumentCategorizerME(model);
+//		}
+
+		try(InputStream modelIn = new ClassPathResource("en-fil-doccat-naive-bayes.bin").getInputStream()) {
 			DoccatModel model = new DoccatModel(modelIn);
-			this.categorizer = new DocumentCategorizerME(model);
+			this.categorizerNaiveBayes = new DocumentCategorizerME(model);
 		}
+		
+		this.scheduledOperations = new ScheduledOperations();
 
 		System.out.println("Init success");
 	}
@@ -170,14 +182,29 @@ public class NLPServicesImpl implements NLPServices {
 		return spanArr;
 	}
 	
-	public String categorize(String sentence) {
+	public String categorize(String sentence, String categorizerType) {
 		String category = "";
 		
 		String[] sentenceArr = sentence.split(sentence);
-		double[] outcomes = this.categorizer.categorize(sentenceArr);
-		category = this.categorizer.getBestCategory(outcomes);
+		double[] outcomes = null;
+		
+//		switch (categorizerType) {
+//		case "NAIVE_BAYES":
+//			outcomes = this.categorizer.categorize(sentenceArr);
+//			break;
+//		default:
+//			outcomes = this.categorizerNaiveBayes.categorize(sentenceArr);
+//			break;
+//		}
+		
+		outcomes = this.categorizerNaiveBayes.categorize(sentenceArr);
+		category = this.categorizerNaiveBayes.getBestCategory(outcomes);
 		
 		return category;
+	}
+	
+	public void trainCategorizer() throws IOException {
+		this.scheduledOperations.trainCategorizer();
 	}
 	
 	//public void createDataset() {

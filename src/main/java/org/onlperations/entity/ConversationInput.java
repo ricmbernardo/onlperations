@@ -4,6 +4,7 @@ public class ConversationInput {
 	
 	private String sentence;
 	private String entityType;
+	private String categorizerType;
 	private String language;
 
 	public String getSentence() {
@@ -20,6 +21,14 @@ public class ConversationInput {
 
 	public void setEntityType(String entityType) {
 		this.entityType = entityType;
+	}
+
+	public String getCategorizerType() {
+		return categorizerType;
+	}
+
+	public void setCategorizerType(String categorizerType) {
+		this.categorizerType = categorizerType;
 	}
 
 	public String getLanguage() {

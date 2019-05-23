@@ -1,5 +1,7 @@
 package org.onlperations.services;
 
+import java.io.IOException;
+
 import opennlp.tools.util.Span;
 
 public interface NLPServices {
@@ -10,6 +12,8 @@ public interface NLPServices {
 	
 	public String[] stanfordTag(String sentence, String language);
 	
-	public String categorize(String sentence);
+	public String categorize(String sentence, String categorizerType);
+	
+	public void trainCategorizer() throws IOException;
 
 }

@@ -44,7 +44,7 @@ public class NLPOperationsController {
 
 	@Resource
 	NLPServices nlpServices;
-	
+		
 	@PostMapping(value = "/getPOSTags")
 	public ResponseEntity<String[]> getPOSTags(@RequestBody ConversationInput conversationInput) {
 		String[] tags = nlpServices.tag(conversationInput.getSentence());
@@ -61,7 +61,7 @@ public class NLPOperationsController {
 	
 	@PostMapping(value = "/getCategory")
 	public ResponseEntity<String> getCategory(@RequestBody ConversationInput conversationInput) {
-		String category = nlpServices.categorize(conversationInput.getSentence());
+		String category = nlpServices.categorize(conversationInput.getSentence(), conversationInput.getCategorizerType());
 		HttpHeaders responseHeaders = new HttpHeaders();
 		return new ResponseEntity<String>(category, responseHeaders, HttpStatus.OK);
 	}
@@ -137,6 +137,18 @@ public class NLPOperationsController {
 		
 		HttpHeaders responseHeaders = new HttpHeaders();
 		return new ResponseEntity<Page<Bucket>>(buckets,responseHeaders, HttpStatus.OK);
+	}
+	
+	@GetMapping(value="/trainCategorizer")
+	public ResponseEntity<?> trainCategorizer() {
+		try {
+			nlpServices.trainCategorizer();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity(HttpStatus.OK);
 	}
 
 }
